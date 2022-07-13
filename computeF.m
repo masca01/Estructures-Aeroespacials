@@ -105,6 +105,8 @@ for z=3:3:n_dof
     Mz=Mz+Fext(z-2,1)*(x(z/3,2)-x(3,2));
 end
 
+%Prova de github amb els canvis.
+
 
 
 
