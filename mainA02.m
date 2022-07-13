@@ -135,4 +135,4 @@ Fext = computeF(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
 scale = 20; % Adjust this parameter for properly visualizing the deformation
 plotBarStress3D(x,Tn,u,sig,scale);
 
-%TASK 01.
+%TASK 01. PULL REQUEST TEST.
