@@ -134,3 +134,5 @@ Fext = computeF(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
 % Plot deformed structure with stress of each bar
 scale = 20; % Adjust this parameter for properly visualizing the deformation
 plotBarStress3D(x,Tn,u,sig,scale);
+
+%TASK 01.
