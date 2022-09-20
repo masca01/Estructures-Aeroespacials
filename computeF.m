@@ -71,6 +71,10 @@ for xm=1:3:n_dof
     Fx=Fx+Fext(xm,1);
 end
 
+ax = Fx/(WM/9.81);
+
+Fx = Fx - ax*(WM/9.81);
+
 % SUMATORIO DE FUERZAS EN Y
 
 for y=2:3:n_dof
@@ -104,8 +108,6 @@ end      %    Fx            Dz                 Fz               Dx
 for z=3:3:n_dof
     Mz=Mz+Fext(z-2,1)*(x(z/3,2)-x(3,2));
 end
-
-%TASK 01.
 
 
 

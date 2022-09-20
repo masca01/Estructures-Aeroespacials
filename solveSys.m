@@ -23,7 +23,10 @@ K_RR=KG(vR,vR);
 Fext_L=Fext(vL,1);
 Fext_R=Fext(vR,1);
 
-uL=inv(K_LL)*(Fext_L-K_LR*uR);
+% uL=inv(K_LL)*(Fext_L-K_LR*uR);
+
+class1 = DirectSolver(K_LL,Fext_L,K_LR,uR);
+uL = class1.operacio();
 
 R=K_RR*uR+K_RL*uL-Fext_R;
 
