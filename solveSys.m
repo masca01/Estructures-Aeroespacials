@@ -1,4 +1,4 @@
-function [u,R] = solveSys(vL,vR,uR,KG,Fext)
+function [u,R] = solveSys(vL,vR,uR,KG,Fext,method)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - vL      Free degree of freedom vector
@@ -23,10 +23,11 @@ K_RR=KG(vR,vR);
 Fext_L=Fext(vL,1);
 Fext_R=Fext(vR,1);
 
-% uL=inv(K_LL)*(Fext_L-K_LR*uR);
+LHS = K_LL;
+RHS = Fext_L-K_LR*uR;
 
-class1 = DirectSolver(K_LL,Fext_L,K_LR,uR);
-uL = class1.operacio();
+class = Solver(LHS,RHS,method);
+uL = class.operacio();
 
 R=K_RR*uR+K_RL*uL-Fext_R;
 
