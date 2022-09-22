@@ -27,7 +27,7 @@ LHS = K_LL;
 RHS = Fext_L-K_LR*uR;
 
 class = Solver(LHS,RHS,method);
-uL = class.operacio();
+uL = class.solve();
 
 R=K_RR*uR+K_RL*uL-Fext_R;
 

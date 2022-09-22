@@ -1,8 +1,8 @@
-classdef Solver
+classdef Solver < handle
 
    properties (Access = public)
-      RHS
       LHS
+      RHS
       method
    end
 
@@ -14,17 +14,20 @@ classdef Solver
            obj.method = method;
        end
 
-       function uL = operacio(obj) % uL = inv(K_LL)*(Fext_L-K_LR*uR); --> K_LL * uL = (Fext_L-K_LR*uR)
+       function uL = solve(obj)
 
           switch (obj.method)
 
-              case {'Iterative'}
-
-                    uL = pcg(obj.LHS,obj.RHS,1e-06,20); % IterativeSolver x = pcg(A,b) attempts to solve the system of linear equations A*x = b
-
               case {'Direct'}
 
-                    uL = obj.LHS\obj.RHS; % DirectSolver
+                  class1 = DirectSolver(obj.LHS,obj.RHS,obj.method);
+                  uL = class1.directsolve();
+
+           
+              case {'Iterative'}
+
+                class2 = IterativeSolver(obj.LHS,obj.RHS,obj.method);
+                uL = class2.solve();
             
               otherwise
 
