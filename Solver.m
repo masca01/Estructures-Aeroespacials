@@ -18,13 +18,18 @@ classdef Solver
 
           switch (obj.method)
 
-              case {'Direct'}
+              case {'Iterative'}
+
                     uL = pcg(obj.LHS,obj.RHS,1e-06,20); % IterativeSolver x = pcg(A,b) attempts to solve the system of linear equations A*x = b
 
-              case {'Iterative'}
+              case {'Direct'}
+
                     uL = obj.LHS\obj.RHS; % DirectSolver
+            
               otherwise
+
                   disp('Wrong method in uL calculation.')
+
           end
 
             
