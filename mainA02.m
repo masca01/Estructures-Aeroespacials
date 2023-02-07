@@ -136,3 +136,4 @@ method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 % Plot deformed structure with stress of each bar
 scale = 20; % Adjust this parameter for properly visualizing the deformation
 plotBarStress3D(x,Tn,u,sig,scale);
+
