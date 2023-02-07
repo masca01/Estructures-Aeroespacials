@@ -122,8 +122,10 @@ Fext = computeF(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
 % Apply conditions 
 [vL,vR,uR] = applyCond(n_dof,n_i,fixNod);
 
+method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
+
 % System resolution
-[u,R] = solveSys(vL,vR,uR,KG,Fext);
+[u,R] = solveSys(vL,vR,uR,KG,Fext,method);
 
 % Compute strain and stresses
 [sig,eps] = computeStrainStressBar(n_el,n_el_dof,u,Td,x,Tn,mat,Tmat);
@@ -135,4 +137,3 @@ Fext = computeF(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
 scale = 20; % Adjust this parameter for properly visualizing the deformation
 plotBarStress3D(x,Tn,u,sig,scale);
 
-%TASK 01. PULL REQUEST TEST.
