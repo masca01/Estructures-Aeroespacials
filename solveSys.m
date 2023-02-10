@@ -34,5 +34,26 @@ R=K_RR*uR+K_RL*uL-Fext_R;
 u(vL,1)=uL;
 u(vR,1)=uR;
 
+%% UL UNIT TESTING
 
+% unit_testing = matfile('unit_testing.mat','Writable',true);
+%  
+% unit_testing.uL = uL;
+
+unit_testing = load('unit_testing.mat');
+
+error_uL = unit_testing.uL - uL;
+
+[numRows,numCols] = size(error_uL);
+
+for i = 1 : numRows
+
+    for j = 1 : numCols
+
+        if error_uL(i,j) == 0
+ 
+        else
+            disp("Error in global displacement vector assembly (u) row "+ i +" column "+ j);
+        end
+    end
 end

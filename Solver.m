@@ -22,7 +22,6 @@ classdef Solver < handle
 
                   class1 = DirectSolver(obj.LHS,obj.RHS,obj.method);
                   uL = class1.directsolve();
-
            
               case {'Iterative'}
 
@@ -34,12 +33,6 @@ classdef Solver < handle
                   disp('Wrong method in uL calculation.')
 
           end
-
-            
-        end
-
-         
-
-      end
-
+       end
+   end
 end
