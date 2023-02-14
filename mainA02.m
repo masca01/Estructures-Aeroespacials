@@ -126,7 +126,8 @@ Fext = computeF(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
 method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 
 % System resolution
-[u,R] = solveSys(vL,vR,uR,KG,Fext,method);
+class_solveSys = solveSys(method);
+[u,R] = class_solveSys.calc(vL,vR,uR,KG,Fext);
 
 % Compute strain and stresses
 [sig,eps] = computeStrainStressBar(n_el,n_el_dof,u,Td,x,Tn,mat,Tmat);

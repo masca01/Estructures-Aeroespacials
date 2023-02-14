@@ -1,38 +1,28 @@
-classdef Solver < handle
+classdef Solver < solveSys
 
-   properties (Access = public)
-      LHS
-      RHS
-      method
-   end
+    methods (Access = public)
 
-   methods (Access = public)
+        function uL = solve_uL(obj)
 
-       function obj = Solver(LHS,RHS,method)
-           obj.LHS = LHS;
-           obj.RHS = RHS;
-           obj.method = method;
-       end
+            obj = obj.method;
 
-       function uL = solve(obj)
+            switch (obj.method)
 
-          switch (obj.method)
+                case {'Direct'}
 
-              case {'Direct'}
+                    class1 = DirectSolver(obj);
+                    uL = class1.directsolve();
 
-                  class1 = DirectSolver(obj.LHS,obj.RHS,obj.method);
-                  uL = class1.directsolve();
-           
-              case {'Iterative'}
+                case {'Iterative'}
 
-                class2 = IterativeSolver(obj.LHS,obj.RHS,obj.method);
-                uL = class2.solve();
-            
-              otherwise
+                    class2 = IterativeSolver(obj);
+                    uL = class2.iterativesolve();
 
-                  disp('Wrong method in uL calculation.')
+                otherwise
 
-          end
-       end
-   end
+                    disp('Wrong method in uL calculation.')
+
+            end
+        end
+    end
 end

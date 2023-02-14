@@ -1,4 +1,3 @@
-function [u,R] = solveSys(vL,vR,uR,KG,Fext,method)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - vL      Free degree of freedom vector
@@ -16,44 +15,64 @@ function [u,R] = solveSys(vL,vR,uR,KG,Fext,method)
 %              R(I) - Total reaction acting on global DOF I
 %--------------------------------------------------------------------------
 
-K_LL=KG(vL,vL);
-K_LR=KG(vL,vR);
-K_RL=KG(vR,vL);
-K_RR=KG(vR,vR);
-Fext_L=Fext(vL,1);
-Fext_R=Fext(vR,1);
+classdef solveSys < handle
 
-LHS = K_LL;
-RHS = Fext_L-K_LR*uR;
+    properties (Access = public)
+        method
+        LHS
+        RHS
+    end
 
-class = Solver(LHS,RHS,method);
-uL = class.solve();
+    methods (Access = public)
 
-R=K_RR*uR+K_RL*uL-Fext_R;
+        function obj = solveSys(method)
+            obj.method = method;
+        end
 
-u(vL,1)=uL;
-u(vR,1)=uR;
+        function [u,R] = calc(obj,vL,vR,uR,KG,Fext)
 
-%% UL UNIT TESTING
+            K_LL = KG(vL,vL);
+            K_LR = KG(vL,vR);
+            K_RL = KG(vR,vL);
+            K_RR = KG(vR,vR);
+            Fext_L = Fext(vL,1);
+            Fext_R = Fext(vR,1);
 
-% unit_testing = matfile('unit_testing.mat','Writable',true);
-%  
-% unit_testing.uL = uL;
+            obj.LHS = K_LL;
+            obj.RHS = Fext_L-K_LR*uR;
 
-unit_testing = load('unit_testing.mat');
+            class_solver = Solver(obj);
+            uL = class_solver.solve_uL();
 
-error_uL = unit_testing.uL - uL;
+            R=K_RR*uR+K_RL*uL-Fext_R;
 
-[numRows,numCols] = size(error_uL);
+            u(vL,1)=uL;
+            u(vR,1)=uR;
 
-for i = 1 : numRows
+            %% UL UNIT TESTING
 
-    for j = 1 : numCols
+            % unit_testing = matfile('unit_testing.mat','Writable',true);
+            %
+            % unit_testing.uL = uL;
 
-        if error_uL(i,j) == 0
- 
-        else
-            disp("Error in global displacement vector assembly (u) row "+ i +" column "+ j);
+            unit_testing = load('unit_testing.mat');
+
+            error_uL = unit_testing.uL - uL;
+
+            [numRows,numCols] = size(error_uL);
+
+            for i = 1 : numRows
+
+                for j = 1 : numCols
+
+                    if error_uL(i,j) < 1 * 10^(-7)
+
+                    else
+                        disp("Error in global displacement vector assembly (uL) row "+ i +" column "+ j);
+                    end
+                end
+            end
+
         end
     end
 end

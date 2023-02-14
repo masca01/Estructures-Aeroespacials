@@ -1,15 +1,13 @@
 classdef DirectSolver < Solver
 
-   methods (Access = public)
+    methods (Access = public)
 
-           function uL = directsolve(obj)
+        function uL = directsolve(obj)
+
+            obj = obj.method;
 
             uL = obj.LHS\obj.RHS;
 
         end
-
-         % uL = inv(K_LL)*(Fext_L-K_LR*uR); --> K_LL * uL = (Fext_L-K_LR*uR)
-
-      end
-
+    end
 end
