@@ -1,4 +1,4 @@
-classdef computeKelBar < handle
+classdef computeKelBar < mainA02
 
     methods (Access = public)
 

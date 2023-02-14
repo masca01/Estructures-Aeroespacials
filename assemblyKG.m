@@ -1,4 +1,4 @@
-classdef assemblyKG < handle
+classdef assemblyKG < mainA02
 
      methods (Access = public)
 

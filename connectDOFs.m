@@ -1,4 +1,4 @@
-classdef connectDOFs < handle
+classdef connectDOFs < mainA02
 
     methods (Access = public)
 

@@ -15,7 +15,7 @@
 %              R(I) - Total reaction acting on global DOF I
 %--------------------------------------------------------------------------
 
-classdef solveSys < handle
+classdef solveSys < mainA02
 
     properties (Access = public)
         method

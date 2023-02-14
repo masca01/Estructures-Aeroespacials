@@ -16,7 +16,7 @@
 % determine at which DOF in the global system each displacement is prescribed.
 %--------------------------------------------------------------------------
 
-classdef applyCond < handle
+classdef applyCond < mainA02
 
     methods (Access = public)
 

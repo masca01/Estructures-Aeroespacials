@@ -23,7 +23,7 @@
 %            sig(e) - Stress of bar e
 %--------------------------------------------------------------------------
 
-classdef computeStrainStressBar < handle
+classdef computeStrainStressBar < mainA02
 
     methods (Access = public)
 

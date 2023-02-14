@@ -8,7 +8,7 @@
 % - scale  Scale factor for the displacements       scalar
 %--------------------------------------------------------------------------
 
-classdef plotBarStress3D < handle
+classdef plotBarStress3D < mainA02
 
     methods (Access = public)
 

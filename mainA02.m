@@ -1,147 +1,175 @@
-%-------------------------------------------------------------------------%
-% ASSIGNMENT 02
-%-------------------------------------------------------------------------%
-% Date:
-% Author/s: VALERI
-%
+classdef mainA02 < handle
+
+    properties (Access = public)
+        %% INPUT DATA
+
+        % Geometric data
+        H = 0.9;
+        W = 0.85;
+        B = 3.2;
+        D1 = 18*10^(-3);
+        d1 = 7.5*10^(-3);
+        D2 = 3*10^(-3);
+        d2 = 0;
+
+        % Mass
+        M = 150;
+
+        % Thrust
+        T = 1962.8882;
+
+        % Other
+        g = 9.81;
+
+        L = 1614.45285;
+
+        WM
+        D
+        x
+        Tn
+        fixNod
+        mat
+        Tmat
+
+        % Dimensions
+        n_d             % Number of dimensions
+        n_i                 % Number of DOFs for each node
+        n               % Total number of nodes
+        n_dof               % Total number of degrees of freedom
+        n_el          % Total number of elements
+        n_nod          % Number of nodes for each element
+        n_el_dof       % Number of DOFs for each element
+
+    end
 
 
-clear;
-close all;
+    methods (Access = public)
 
-%% INPUT DATA
+        function obj = mainA02()
 
-% Geometric data
-H = 0.9;
-W = 0.85;
-B = 3.2;
-D1 = 18*10^(-3);
-d1 = 7.5*10^(-3);
-D2 = 3*10^(-3);
-d2 = 0;
+            obj.WM = obj.M * obj.g;
 
-% Mass
-M = 150;
+            obj.D = obj.T;
 
-% Thrust
-T = 1962.8882;
+            %% PREPROCESS
 
-% Other
-g = 9.81;
+            % Nodal coordinates matrix
+            %  x(a,j) = coordinate of node a in the dimension j
+            obj.x = [%     X      Y      Z
+                2*obj.W,  -obj.W/2,     0; % (1)
+                2*obj.W,   obj.W/2,     0; % (2)
+                2*obj.W,     0,     obj.H; % (3)
+                0,     0,     obj.H; % (4)
+                0,    -obj.B,     obj.H; % (5)
+                0,     obj.B,     obj.H; % (6)
+                obj.W,     0,     obj.H; % (7)
+                ];
 
-WM = M * g;
+            % Nodal connectivities
+            %  Tn(e,a) = global nodal number associated to node a of element e
+            obj.Tn = [1 2; %1
+                2 3; %2
+                1 3; %3
+                3 5; %4
+                3 6; %5
+                3 7; %6
+                4 5; %7
+                4 6; %8
+                4 7; %9
+                5 7; %10
+                6 7; %11
+                1 4; %12
+                1 5; %13
+                1 7; %14
+                2 4; %15
+                2 6; %16
+                2 7; %17
+                ];
 
-L = 1614.45285;
+            % Fix nodes matrix creation
+            %  fixNod(k,1) = node at which some DOF is prescribed
+            %  fixNod(k,2) = DOF prescribed
+            %  fixNod(k,3) = prescribed displacement in the corresponding DOF (0 for fixed)
+            obj.fixNod = [1 3 0;
+                3 1 0;
+                3 2 0;
+                3 3 0;
+                4 2 0;
+                4 3 0
+                ];
 
-D = T;
+            % Material properties matrix
+            %  mat(m,1) = Young modulus of material m
+            %  mat(m,2) = Section area of material m
+            %  mat(m,3) = Density of material m
+            %  --more columns can be added for additional material properties--
+            obj.mat = [% Young M.        Section A.    Density   D     d
+                75000*10^(6),  pi*((obj.D1-obj.d1)/2)^2,  3350,   obj.D1,   obj.d1;  % Material (1)
+                147000*10^(6), pi*((obj.D2-obj.d2)/2)^2,  950,    obj.D2,   obj.d2;% Material (2)
+                ];
 
-%% PREPROCESS
+            % Material connectivities
+            %  Tmat(e) = Row in mat corresponding to the material associated to element e
+            obj.Tmat = [1;1;1;1;1;1;1;1;1;1;1;2;2;2;2;2;2
+                ];
 
-% Nodal coordinates matrix
-%  x(a,j) = coordinate of node a in the dimension j
-x = [%     X      Y      Z
-    2*W,  -W/2,     0; % (1)
-    2*W,   W/2,     0; % (2)
-    2*W,     0,     H; % (3)
-    0,     0,     H; % (4)
-    0,    -B,     H; % (5)
-    0,     B,     H; % (6)
-    W,     0,     H; % (7)
-    ];
+            % Dimensions
+            obj.n_d = size(obj.x,2);              % Number of dimensions
+            obj.n_i = obj.n_d;                    % Number of DOFs for each node
+            obj.n = size(obj.x,1);                % Total number of nodes
+            obj.n_dof = obj.n_i*obj.n;                % Total number of degrees of freedom
+            obj.n_el = size(obj.Tn,1);            % Total number of elements
+            obj.n_nod = size(obj.Tn,2);           % Number of nodes for each element
+            obj.n_el_dof = obj.n_i*obj.n_nod;         % Number of DOFs for each element
 
-% Nodal connectivities
-%  Tn(e,a) = global nodal number associated to node a of element e
-Tn = [1 2; %1
-    2 3; %2
-    1 3; %3
-    3 5; %4
-    3 6; %5
-    3 7; %6
-    4 5; %7
-    4 6; %8
-    4 7; %9
-    5 7; %10
-    6 7; %11
-    1 4; %12
-    1 5; %13
-    1 7; %14
-    2 4; %15
-    2 6; %16
-    2 7; %17
-    ];
+        end
 
-% Fix nodes matrix creation
-%  fixNod(k,1) = node at which some DOF is prescribed
-%  fixNod(k,2) = DOF prescribed
-%  fixNod(k,3) = prescribed displacement in the corresponding DOF (0 for fixed)
-fixNod = [1 3 0;
-    3 1 0;
-    3 2 0;
-    3 3 0;
-    4 2 0;
-    4 3 0
-    ];
+        function main(obj)
 
-% Material properties matrix
-%  mat(m,1) = Young modulus of material m
-%  mat(m,2) = Section area of material m
-%  mat(m,3) = Density of material m
-%  --more columns can be added for additional material properties--
-mat = [% Young M.        Section A.    Density   D     d
-    75000*10^(6),  pi*((D1-d1)/2)^2,  3350,   D1,   d1;  % Material (1)
-    147000*10^(6), pi*((D2-d2)/2)^2,  950,    D2,   d2;% Material (2)
-    ];
+            %% SOLVER
 
-% Material connectivities
-%  Tmat(e) = Row in mat corresponding to the material associated to element e
-Tmat = [1;1;1;1;1;1;1;1;1;1;1;2;2;2;2;2;2
-    ];
+            % Computation of the DOFs connectivities
+            class_connectDOFs = connectDOFs();
+            Td = class_connectDOFs.connect(obj.n,obj.n_el,obj.n_el_dof,obj.n_d,obj.Tn);
 
-%% SOLVER
+            % Computation of element stiffness matrices
+            class_computeKelBar = computeKelBar();
+            Kel = class_computeKelBar.compute(obj.n_el_dof,obj.n_el,obj.x,obj.Tn,obj.mat,obj.Tmat);
 
-% Dimensions
-n_d = size(x,2);              % Number of dimensions
-n_i = n_d;                    % Number of DOFs for each node
-n = size(x,1);                % Total number of nodes
-n_dof = n_i*n;                % Total number of degrees of freedom
-n_el = size(Tn,1);            % Total number of elements
-n_nod = size(Tn,2);           % Number of nodes for each element
-n_el_dof = n_i*n_nod;         % Number of DOFs for each element
+            % Global matrix assembly
+            class_assemblyKG = assemblyKG();
+            KG = class_assemblyKG.assembly(obj.n_el,obj.n_el_dof,obj.n_dof,Td,Kel);
 
-% Computation of the DOFs connectivities
-class_connectDOFs = connectDOFs();
-Td = class_connectDOFs.connect(n,n_el,n_el_dof,n_d,Tn);
+            % Global force vector assembly
+            class_computeF = computeF();
+            Fext = class_computeF.compute(obj.n_el,obj.n_dof,obj.n_nod,obj.T,obj.WM,obj.L,obj.D,obj.mat,obj.Tmat,obj.Tn,obj.x,obj.g);
 
-% Computation of element stiffness matrices
-class_computeKelBar = computeKelBar();
-Kel = class_computeKelBar.compute(n_el_dof,n_el,x,Tn,mat,Tmat);
+            % Apply conditions
+            class_applyCond = applyCond();
+            [vL,vR,uR] = class_applyCond.apply(obj.n_dof,obj.n_i,obj.fixNod);
 
-% Global matrix assembly
-class_assemblyKG = assemblyKG();
-KG = class_assemblyKG.assembly(n_el,n_el_dof,n_dof,Td,Kel);
+            method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 
-% Global force vector assembly
-class_computeF = computeF();
-Fext = class_computeF.compute(n_el,n_dof,n_nod,T,WM,L,D,mat,Tmat,Tn,x,g);
+            % System resolution
+            class_solveSys = solveSys(method);
+            [u,~] = class_solveSys.calc(vL,vR,uR,KG,Fext);
+            %[u,R] = class_solveSys.calc(vL,vR,uR,KG,Fext);
 
-% Apply conditions
-class_applyCond = applyCond();
-[vL,vR,uR] = class_applyCond.apply(n_dof,n_i,fixNod);
-
-method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
-
-% System resolution
-class_solveSys = solveSys(method);
-[u,R] = class_solveSys.calc(vL,vR,uR,KG,Fext);
-
-% Compute strain and stresses
-class_computeStrainStressBar = computeStrainStressBar();
-[sig,eps] = class_computeStrainStressBar.compute(n_el,n_el_dof,u,Td,x,Tn,mat,Tmat);
+            % Compute strain and stresses
+            class_computeStrainStressBar = computeStrainStressBar();
+            [sig,~] = class_computeStrainStressBar.compute(obj.n_el,obj.n_el_dof,u,Td,obj.x,obj.Tn,obj.mat,obj.Tmat);
+            %[sig,eps] = class_computeStrainStressBar.compute(obj.n_el,obj.n_el_dof,u,Td,obj.x,obj.Tn,obj.mat,obj.Tmat);
 
 
-%% POSTPROCESS
+            %% POSTPROCESS
 
-% Plot deformed structure with stress of each bar
-scale = 20; % Adjust this parameter for properly visualizing the deformation
-class_plotBarStress3D = plotBarStress3D();
-class_plotBarStress3D.plot(x,Tn,u,sig,scale);
+            % Plot deformed structure with stress of each bar
+            scale = 20; % Adjust this parameter for properly visualizing the deformation
+
+            class_plotBarStress3D = plotBarStress3D();
+            class_plotBarStress3D.plot(obj.x,obj.Tn,u,sig,scale);
+
+        end
+
+    end
+end

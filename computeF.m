@@ -15,7 +15,7 @@
 % determine at which DOF in the global system each force is applied.
 %--------------------------------------------------------------------------
 
-classdef computeF < handle
+classdef computeF < mainA02
 
     methods (Access = public)
 
