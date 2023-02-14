@@ -1,4 +1,3 @@
-function [vL,vR,uR] = applyCond(n_dof,n_i,fixNod)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - Dimensions:  n_i      Number of DOFs per node
@@ -15,28 +14,63 @@ function [vL,vR,uR] = applyCond(n_dof,n_i,fixNod)
 %--------------------------------------------------------------------------
 % Hint: Use the relation between the DOFs numbering and nodal numbering to
 % determine at which DOF in the global system each displacement is prescribed.
+%--------------------------------------------------------------------------
 
+classdef applyCond < handle
 
-vL = zeros(n_dof-size(fixNod,1), 1);
-vR = zeros(size(fixNod,1),1);
-uR = zeros(size(fixNod,1),1);
+    methods (Access = public)
 
-for i=1:size(fixNod,1)
-    if fixNod(i,2)==1       
-        vR(i)=fixNod(i,1)*n_i-2;
-    elseif fixNod(i,2)==2 
-        vR(i)=fixNod(i,1)*n_i-1;
-    else
-        vR(i)=fixNod(i,1)*n_i;
+        function [vL,vR,uR] = apply(~,n_dof,n_i,fixNod)
+
+            %vL = zeros(n_dof-size(fixNod,1), 1);
+            vR = zeros(size(fixNod,1),1);
+            uR = zeros(size(fixNod,1),1);
+
+            for i=1:size(fixNod,1)
+
+                if fixNod(i,2)==1
+                    vR(i)=fixNod(i,1)*n_i-2;
+                elseif fixNod(i,2)==2
+                    vR(i)=fixNod(i,1)*n_i-1;
+                else
+                    vR(i)=fixNod(i,1)*n_i;
+                end
+
+            end
+
+            for i = 1 : size(fixNod,1)
+                uR(i,1) = fixNod(i,3);
+            end
+
+            e = 1 : n_dof;
+            e(vR) = [];
+            vL = transpose(e);
+
+        end
     end
 end
 
-for i=1:size(fixNod,1)
-    
-    uR(i,1)=fixNod(i,3);
-end
-
-e=1:n_dof;
-e(vR)=[];
-vL=transpose(e);
-
+% function [vL,vR,uR] = applyCond(n_dof,n_i,fixNod)
+% 
+% vL = zeros(n_dof-size(fixNod,1), 1);
+% vR = zeros(size(fixNod,1),1);
+% uR = zeros(size(fixNod,1),1);
+% 
+% for i=1:size(fixNod,1)
+%     if fixNod(i,2)==1
+%         vR(i)=fixNod(i,1)*n_i-2;
+%     elseif fixNod(i,2)==2
+%         vR(i)=fixNod(i,1)*n_i-1;
+%     else
+%         vR(i)=fixNod(i,1)*n_i;
+%     end
+% end
+% 
+% for i=1:size(fixNod,1)
+% 
+%     uR(i,1)=fixNod(i,3);
+% end
+% 
+% e=1:n_dof;
+% e(vR)=[];
+% vL=transpose(e);

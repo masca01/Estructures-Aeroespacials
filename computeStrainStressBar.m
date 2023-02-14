@@ -1,4 +1,3 @@
-function [sig,eps] = computeStrainStressBar(n_el,n_el_dof,u,Td,x,Tn,mat,Tmat)
 %--------------------------------------------------------------------------
 % The function takes as inputs:
 %   - Dimensions:  n_d        Problem's dimensions
@@ -24,41 +23,52 @@ function [sig,eps] = computeStrainStressBar(n_el,n_el_dof,u,Td,x,Tn,mat,Tmat)
 %            sig(e) - Stress of bar e
 %--------------------------------------------------------------------------
 
-for e=1:n_el
+classdef computeStrainStressBar < handle
 
-    x1=x(Tn(e,1),1);
-    x2=x(Tn(e,2),1);
-    y1=x(Tn(e,1),2);
-    y2=x(Tn(e,2),2);
-    z1=x(Tn(e,1),3);
-    z2=x(Tn(e,2),3);
+    methods (Access = public)
 
-    l=sqrt((x2-x1)^2+(y2-y1)^2+(z2-z1)^2);
-     
-    R = (1/l).*[x2-x1 y2-y1 z2-z1 0 0 0;
-        0 0 0 x2-x1 y2-y1 z2-z1];
-   
-    for i=1:(n_el_dof)
-        I=Td(e,i);
-        ue(i,1)=u(I);
+        function [sig,eps] = compute(~,n_el,n_el_dof,u,Td,x,Tn,mat,Tmat)
+
+            ue = zeros(n_el_dof,1);
+            eps = zeros(n_el,1);
+            sig = zeros(n_el,1);
+
+            for e = 1 : n_el
+
+                x1 = x(Tn(e,1),1);
+                x2 = x(Tn(e,2),1);
+                y1 = x(Tn(e,1),2);
+                y2 = x(Tn(e,2),2);
+                z1 = x(Tn(e,1),3);
+                z2 = x(Tn(e,2),3);
+
+                l = sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2);
+
+                R = (1/l).*[x2-x1 y2-y1 z2-z1 0 0 0;
+                    0 0 0 x2-x1 y2-y1 z2-z1];
+
+                for i = 1 : (n_el_dof)
+
+                    I = Td(e,i);
+                    ue(i,1) = u(I);
+
+                end
+
+                u_e = R * ue;
+
+                eps(e,1) = (1/l).*[-1 1] * u_e;
+                sig(e,1) = (mat(Tmat(e),1)) * eps(e,1);
+
+
+                In = (pi/4) * (((mat(Tmat(e),4))/2)^4 - ((mat(Tmat(e),5))/2)^4);
+
+                sig_cr = (pi^2 * (mat(Tmat(e),1)) * In) / (l^2 * (mat(Tmat(e),2)));
+
+                if sig(e) < 0 && abs((sig(e))) >= sig_cr
+                    disp("Caution! Bar number " + e + " will bend.")
+                end
+
+            end
+        end
     end
-
-    u_e=R*ue;
-    eps(e,1)=(1/l).*[-1 1]*u_e;
-    sig(e,1)=(mat(Tmat(e),1))*eps(e,1);
-
-
-    In=(pi/4)*(((mat(Tmat(e),4))/2)^4-((mat(Tmat(e),5))/2)^4);
-
-    sig_cr=(pi^2*(mat(Tmat(e),1))*In)/(l^2*(mat(Tmat(e),2)));
-
-    if sig(e)<0 && abs((sig(e)))>=sig_cr
-        disp('Pandea la barra: ');
-        disp(e);
-    end
-
 end
-
- 
-
-
