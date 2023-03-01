@@ -124,7 +124,12 @@ classdef mainA02 < handle
 
         end
 
-        function main(obj)
+    end
+    
+
+    methods (Static)
+
+        function main()
 
             %% SOLVER
 
