@@ -13,6 +13,8 @@ classdef plotBarStress3D < mainA02
     methods (Access = public)
 
         function plot(obj,u,sig,scale)
+            
+            obj.sig = sig;
 
             % Precomputations
             nd = size(obj.x,2);
@@ -33,7 +35,7 @@ classdef plotBarStress3D < mainA02
             plot3(X(obj.Tn)',Y(obj.Tn)',Z(obj.Tn)','-k','linewidth',0.5);
 
             % Plot deformed structure with stress colormapped
-            patch(X(obj.Tn)'+scale*ux(obj.Tn)',Y(obj.Tn)'+scale*uy(obj.Tn)',Z(obj.Tn)'+scale*uz(obj.Tn)',[sig';sig'],'edgecolor','flat','linewidth',2);
+            patch(X(obj.Tn)'+scale*ux(obj.Tn)',Y(obj.Tn)'+scale*uy(obj.Tn)',Z(obj.Tn)'+scale*uz(obj.Tn)',[obj.sig';obj.sig'],'edgecolor','flat','linewidth',2);
 
             % View angle
             view(45,20);
@@ -47,7 +49,7 @@ classdef plotBarStress3D < mainA02
             title(sprintf('Deformed structure (scale = %g)',scale));
 
             % Add colorbar
-            cbar = colorbar('Ticks',linspace(min(sig),max(sig),5));
+            cbar = colorbar('Ticks',linspace(min(obj.sig),max(obj.sig),5));
             title(cbar,{'Stress';'(Pa)'});
 
         end

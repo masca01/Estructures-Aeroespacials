@@ -18,60 +18,43 @@
 classdef solveSys < mainA02
 
     properties (Access = public)
-        method
         LHS
         RHS
+        uL
     end
 
     methods (Access = public)
 
-        function obj = solveSys(method)
-            obj.method = method;
-        end
 
         function [u,R] = calc(obj,vL,vR,uR,KG,Fext)
 
-            K_LL = KG(vL,vL);
-            K_LR = KG(vL,vR);
-            K_RL = KG(vR,vL);
-            K_RR = KG(vR,vR);
-            Fext_L = Fext(vL,1);
-            Fext_R = Fext(vR,1);
+            obj.vL = vL;
+            obj.vR = vR;
+            obj.uR = uR;
+            obj.KG = KG;
+            obj.Fext = Fext;
+
+            K_LL = obj.KG(obj.vL,obj.vL);
+            K_LR = obj.KG(obj.vL,obj.vR);
+            K_RL = obj.KG(obj.vR,obj.vL);
+            K_RR = obj.KG(obj.vR,obj.vR);
+            Fext_L = obj.Fext(obj.vL,1);
+            Fext_R = obj.Fext(obj.vR,1);
 
             obj.LHS = K_LL;
-            obj.RHS = Fext_L-K_LR*uR;
+            obj.RHS = Fext_L-K_LR*obj.uR;
 
-            class_solver = Solver(obj);
-            uL = class_solver.solve_uL();
+            class_solver = Solver();
+            obj.uL = class_solver.solve_uL(obj.LHS,obj.RHS);
 
-            R=K_RR*uR+K_RL*uL-Fext_R;
+            R=K_RR*obj.uR+K_RL*obj.uL-Fext_R;
 
-            u(vL,1)=uL;
-            u(vR,1)=uR;
+            u(obj.vL,1)=obj.uL;
+            u(obj.vR,1)=obj.uR;
 
             %% UL UNIT TESTING
 
-            % unit_testing = matfile('unit_testing.mat','Writable',true);
-            %
-            % unit_testing.uL = uL;
-
-            unit_testing = load('unit_testing.mat');
-
-            error_uL = unit_testing.uL - uL;
-
-            [numRows,numCols] = size(error_uL);
-
-            for i = 1 : numRows
-
-                for j = 1 : numCols
-
-                    if error_uL(i,j) < 1 * 10^(-7)
-
-                    else
-                        disp("Error in global displacement vector assembly (uL) row "+ i +" column "+ j);
-                    end
-                end
-            end
+            unit_testing_uL(obj.uL);
 
         end
     end

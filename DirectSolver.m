@@ -2,9 +2,10 @@ classdef DirectSolver < Solver
 
     methods (Access = public)
 
-        function uL = directsolve(obj)
+        function uL = directsolve(obj,LHS,RHS)
 
-            obj = obj.method;
+            obj.LHS = LHS;
+            obj.RHS = RHS;
 
             uL = obj.LHS\obj.RHS;
 

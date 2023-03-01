@@ -2,9 +2,10 @@ classdef IterativeSolver < Solver
 
     methods (Access = public)
 
-        function uL = iterativesolve(obj)
+        function uL = iterativesolve(obj,LHS,RHS)
 
-            obj = obj.method;
+            obj.LHS = LHS;
+            obj.RHS = RHS;
 
             uL = pcg(obj.LHS,obj.RHS,1e-07,20); %x = pcg(A,b) attempts to solve the system of linear equations A*x = b
 

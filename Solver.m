@@ -2,21 +2,22 @@ classdef Solver < solveSys
 
     methods (Access = public)
 
-        function uL = solve_uL(obj)
+        function uL = solve_uL(obj,LHS,RHS)
 
-            obj = obj.method;
+            obj.LHS = LHS;
+            obj.RHS = RHS;
 
             switch (obj.method)
 
                 case {'Direct'}
 
-                    class1 = DirectSolver(obj);
-                    uL = class1.directsolve();
+                    class1 = DirectSolver();
+                    uL = class1.directsolve(obj.LHS,obj.RHS);
 
                 case {'Iterative'}
 
-                    class2 = IterativeSolver(obj);
-                    uL = class2.iterativesolve();
+                    class2 = IterativeSolver();
+                    uL = class2.iterativesolve(obj.LHS,obj.RHS);
 
                 otherwise
 

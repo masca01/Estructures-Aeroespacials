@@ -29,6 +29,10 @@ classdef computeStrainStressBar < mainA02
 
         function [sig,eps] = compute(obj,u,Td)
 
+            obj.u = u;
+            obj.Td = Td;
+
+
             ue = zeros(obj.n_el_dof,1);
             eps = zeros(obj.n_el,1);
             sig = zeros(obj.n_el,1);
@@ -49,8 +53,8 @@ classdef computeStrainStressBar < mainA02
 
                 for i = 1 : (obj.n_el_dof)
 
-                    I = Td(e,i);
-                    ue(i,1) = u(I);
+                    I = obj.Td(e,i);
+                    ue(i,1) = obj.u(I);
 
                 end
 

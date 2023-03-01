@@ -40,6 +40,20 @@ classdef mainA02 < handle
         n_nod          % Number of nodes for each element
         n_el_dof       % Number of DOFs for each element
 
+        method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
+
+        Td
+        Kel
+        KG
+        Fext
+        vL
+        vR
+        uR
+        u
+        R
+        sig
+        eps
+
     end
 
 
@@ -124,46 +138,39 @@ classdef mainA02 < handle
 
         end
 
-    end
-    
 
-    methods (Static)
-
-        function main()
+        function main(obj)
 
             %% SOLVER
 
             % Computation of the DOFs connectivities
             class_connectDOFs = connectDOFs();
-            Td = class_connectDOFs.connect();
+            obj.Td = class_connectDOFs.connect();
 
             % Computation of element stiffness matrices
             class_computeKelBar = computeKelBar();
-            Kel = class_computeKelBar.compute();
+            obj.Kel = class_computeKelBar.compute();
 
             % Global matrix assembly
             class_assemblyKG = assemblyKG();
-            KG = class_assemblyKG.assembly(Td,Kel);
+            obj.KG = class_assemblyKG.assembly(obj.Td,obj.Kel);
 
             % Global force vector assembly
             class_computeF = computeF();
-            Fext = class_computeF.compute();
+            obj.Fext = class_computeF.compute();
 
             % Apply conditions
             class_applyCond = applyCond();
-            [vL,vR,uR] = class_applyCond.apply();
+            [obj.vL,obj.vR,obj.uR] = class_applyCond.apply();
 
-            method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 
             % System resolution
-            class_solveSys = solveSys(method);
-            [u,~] = class_solveSys.calc(vL,vR,uR,KG,Fext);
-            %[u,R] = class_solveSys.calc(vL,vR,uR,KG,Fext);
+            class_solveSys = solveSys();
+            [obj.u,obj.R] = class_solveSys.calc(obj.vL,obj.vR,obj.uR,obj.KG,obj.Fext);
 
             % Compute strain and stresses
             class_computeStrainStressBar = computeStrainStressBar();
-            [sig,~] = class_computeStrainStressBar.compute(u,Td);
-            %[sig,eps] = class_computeStrainStressBar.compute(obj.n_el,obj.n_el_dof,u,Td,obj.x,obj.Tn,obj.mat,obj.Tmat);
+            [obj.sig,obj.eps] = class_computeStrainStressBar.compute(obj.u,obj.Td);
 
 
             %% POSTPROCESS
@@ -172,7 +179,8 @@ classdef mainA02 < handle
             scale = 20; % Adjust this parameter for properly visualizing the deformation
 
             class_plotBarStress3D = plotBarStress3D();
-            class_plotBarStress3D.plot(u,sig,scale);
+            class_plotBarStress3D.plot(obj.u,obj.sig,scale);
+
 
         end
 
