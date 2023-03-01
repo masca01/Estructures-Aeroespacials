@@ -2,20 +2,20 @@ classdef connectDOFs < mainA02
 
     methods (Access = public)
 
-        function Td = connect(~,n,n_el,n_el_dof,n_d,Tn)
+        function Td = connect(obj)
+            
+            Td=size(obj.n_el,obj.n_el_dof);
+            FD=size(obj.n,obj.n_d);
 
-            Td=size(n_el,n_el_dof);
-            FD=size(n,n_d);
-
-            for i=1:n
+            for i = 1 : obj.n
                 FD(i,1)=(3*i)-2;
                 FD(i,2)=(3*i)-1;
                 FD(i,3)=3*i;
             end
 
-            for j=1:n_el
-                x=Tn(j,1);
-                y=Tn(j,2);
+            for j = 1 : obj.n_el
+                x=obj.Tn(j,1);
+                y=obj.Tn(j,2);
                 x1=FD(x,1);
                 x2=FD(x,2);
                 x3=FD(x,3);

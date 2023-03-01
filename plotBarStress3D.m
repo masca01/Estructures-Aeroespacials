@@ -2,7 +2,7 @@
 % PLOTBARSTRESS3D function.
 % Inputs:                                           Type [Dimensions]
 % - x      Nodal coordinates matrix (in m)          matrix [ n    , nd   ]
-% - Tnod   Nodal connectivities matrix              matrix [ nel  , nnod ]
+% - Tn   Nodal connectivities matrix              matrix [ nel  , nnod ]
 % - u      Array with global displacements (in m)   array  [ ndof ]
 % - sig    Array with stress for each bar (in Pa)   array  [ nel  ]
 % - scale  Scale factor for the displacements       scalar
@@ -12,13 +12,13 @@ classdef plotBarStress3D < mainA02
 
     methods (Access = public)
 
-        function plot(~,x,Tnod,u,sig,scale)
+        function plot(obj,u,sig,scale)
 
             % Precomputations
-            nd = size(x,2);
-            X = x(:,1);
-            Y = x(:,2);
-            Z = x(:,3);
+            nd = size(obj.x,2);
+            X = obj.x(:,1);
+            Y = obj.x(:,2);
+            Z = obj.x(:,3);
             ux = u(1:nd:end);
             uy = u(2:nd:end);
             uz = u(3:nd:end);
@@ -30,10 +30,10 @@ classdef plotBarStress3D < mainA02
             colormap jet;
 
             % Plot undeformed structure
-            plot3(X(Tnod)',Y(Tnod)',Z(Tnod)','-k','linewidth',0.5);
+            plot3(X(obj.Tn)',Y(obj.Tn)',Z(obj.Tn)','-k','linewidth',0.5);
 
             % Plot deformed structure with stress colormapped
-            patch(X(Tnod)'+scale*ux(Tnod)',Y(Tnod)'+scale*uy(Tnod)',Z(Tnod)'+scale*uz(Tnod)',[sig';sig'],'edgecolor','flat','linewidth',2);
+            patch(X(obj.Tn)'+scale*ux(obj.Tn)',Y(obj.Tn)'+scale*uy(obj.Tn)',Z(obj.Tn)'+scale*uz(obj.Tn)',[sig';sig'],'edgecolor','flat','linewidth',2);
 
             % View angle
             view(45,20);

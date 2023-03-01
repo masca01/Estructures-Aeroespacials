@@ -2,17 +2,17 @@ classdef assemblyKG < mainA02
 
      methods (Access = public)
 
-        function KG = assembly(~,n_el,n_el_dof,n_dof,Td,Kel)
+        function KG = assembly(obj,Td,Kel)
 
-            KG=zeros(n_dof,n_dof);
+            KG=zeros(obj.n_dof,obj.n_dof);
 
-            for e=1:n_el
+            for e=1:obj.n_el
 
-                for i=1:n_el_dof
+                for i=1:obj.n_el_dof
 
                     I=Td(e,i);
 
-                    for j=1:n_el_dof
+                    for j=1:obj.n_el_dof
 
                         J=Td(e,j);
                         KG(I,J)=KG(I,J)+Kel(i,j,e);

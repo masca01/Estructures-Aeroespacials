@@ -27,27 +27,27 @@ classdef computeStrainStressBar < mainA02
 
     methods (Access = public)
 
-        function [sig,eps] = compute(~,n_el,n_el_dof,u,Td,x,Tn,mat,Tmat)
+        function [sig,eps] = compute(obj,u,Td)
 
-            ue = zeros(n_el_dof,1);
-            eps = zeros(n_el,1);
-            sig = zeros(n_el,1);
+            ue = zeros(obj.n_el_dof,1);
+            eps = zeros(obj.n_el,1);
+            sig = zeros(obj.n_el,1);
 
-            for e = 1 : n_el
+            for e = 1 : obj.n_el
 
-                x1 = x(Tn(e,1),1);
-                x2 = x(Tn(e,2),1);
-                y1 = x(Tn(e,1),2);
-                y2 = x(Tn(e,2),2);
-                z1 = x(Tn(e,1),3);
-                z2 = x(Tn(e,2),3);
+                x1 = obj.x(obj.Tn(e,1),1);
+                x2 = obj.x(obj.Tn(e,2),1);
+                y1 = obj.x(obj.Tn(e,1),2);
+                y2 = obj.x(obj.Tn(e,2),2);
+                z1 = obj.x(obj.Tn(e,1),3);
+                z2 = obj.x(obj.Tn(e,2),3);
 
                 l = sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2);
 
                 R = (1/l).*[x2-x1 y2-y1 z2-z1 0 0 0;
                     0 0 0 x2-x1 y2-y1 z2-z1];
 
-                for i = 1 : (n_el_dof)
+                for i = 1 : (obj.n_el_dof)
 
                     I = Td(e,i);
                     ue(i,1) = u(I);
@@ -57,12 +57,12 @@ classdef computeStrainStressBar < mainA02
                 u_e = R * ue;
 
                 eps(e,1) = (1/l).*[-1 1] * u_e;
-                sig(e,1) = (mat(Tmat(e),1)) * eps(e,1);
+                sig(e,1) = (obj.mat(obj.Tmat(e),1)) * eps(e,1);
 
 
-                In = (pi/4) * (((mat(Tmat(e),4))/2)^4 - ((mat(Tmat(e),5))/2)^4);
+                In = (pi/4) * (((obj.mat(obj.Tmat(e),4))/2)^4 - ((obj.mat(obj.Tmat(e),5))/2)^4);
 
-                sig_cr = (pi^2 * (mat(Tmat(e),1)) * In) / (l^2 * (mat(Tmat(e),2)));
+                sig_cr = (pi^2 * (obj.mat(obj.Tmat(e),1)) * In) / (l^2 * (obj.mat(obj.Tmat(e),2)));
 
                 if sig(e) < 0 && abs((sig(e))) >= sig_cr
                     disp("Caution! Bar number " + e + " will bend.")

@@ -130,23 +130,23 @@ classdef mainA02 < handle
 
             % Computation of the DOFs connectivities
             class_connectDOFs = connectDOFs();
-            Td = class_connectDOFs.connect(obj.n,obj.n_el,obj.n_el_dof,obj.n_d,obj.Tn);
+            Td = class_connectDOFs.connect();
 
             % Computation of element stiffness matrices
             class_computeKelBar = computeKelBar();
-            Kel = class_computeKelBar.compute(obj.n_el_dof,obj.n_el,obj.x,obj.Tn,obj.mat,obj.Tmat);
+            Kel = class_computeKelBar.compute();
 
             % Global matrix assembly
             class_assemblyKG = assemblyKG();
-            KG = class_assemblyKG.assembly(obj.n_el,obj.n_el_dof,obj.n_dof,Td,Kel);
+            KG = class_assemblyKG.assembly(Td,Kel);
 
             % Global force vector assembly
             class_computeF = computeF();
-            Fext = class_computeF.compute(obj.n_el,obj.n_dof,obj.n_nod,obj.T,obj.WM,obj.L,obj.D,obj.mat,obj.Tmat,obj.Tn,obj.x,obj.g);
+            Fext = class_computeF.compute();
 
             % Apply conditions
             class_applyCond = applyCond();
-            [vL,vR,uR] = class_applyCond.apply(obj.n_dof,obj.n_i,obj.fixNod);
+            [vL,vR,uR] = class_applyCond.apply();
 
             method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 
@@ -157,7 +157,7 @@ classdef mainA02 < handle
 
             % Compute strain and stresses
             class_computeStrainStressBar = computeStrainStressBar();
-            [sig,~] = class_computeStrainStressBar.compute(obj.n_el,obj.n_el_dof,u,Td,obj.x,obj.Tn,obj.mat,obj.Tmat);
+            [sig,~] = class_computeStrainStressBar.compute(u,Td);
             %[sig,eps] = class_computeStrainStressBar.compute(obj.n_el,obj.n_el_dof,u,Td,obj.x,obj.Tn,obj.mat,obj.Tmat);
 
 
@@ -167,7 +167,7 @@ classdef mainA02 < handle
             scale = 20; % Adjust this parameter for properly visualizing the deformation
 
             class_plotBarStress3D = plotBarStress3D();
-            class_plotBarStress3D.plot(obj.x,obj.Tn,u,sig,scale);
+            class_plotBarStress3D.plot(u,sig,scale);
 
         end
 

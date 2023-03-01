@@ -20,57 +20,32 @@ classdef applyCond < mainA02
 
     methods (Access = public)
 
-        function [vL,vR,uR] = apply(~,n_dof,n_i,fixNod)
+        function [vL,vR,uR] = apply(obj)
 
             %vL = zeros(n_dof-size(fixNod,1), 1);
-            vR = zeros(size(fixNod,1),1);
-            uR = zeros(size(fixNod,1),1);
+            vR = zeros(size(obj.fixNod,1),1);
+            uR = zeros(size(obj.fixNod,1),1);
 
-            for i=1:size(fixNod,1)
+            for i=1:size(obj.fixNod,1)
 
-                if fixNod(i,2)==1
-                    vR(i)=fixNod(i,1)*n_i-2;
-                elseif fixNod(i,2)==2
-                    vR(i)=fixNod(i,1)*n_i-1;
+                if obj.fixNod(i,2)==1
+                    vR(i)=obj.fixNod(i,1)*obj.n_i-2;
+                elseif obj.fixNod(i,2)==2
+                    vR(i)=obj.fixNod(i,1)*obj.n_i-1;
                 else
-                    vR(i)=fixNod(i,1)*n_i;
+                    vR(i)=obj.fixNod(i,1)*obj.n_i;
                 end
 
             end
 
-            for i = 1 : size(fixNod,1)
-                uR(i,1) = fixNod(i,3);
+            for i = 1 : size(obj.fixNod,1)
+                uR(i,1) = obj.fixNod(i,3);
             end
 
-            e = 1 : n_dof;
+            e = 1 : obj.n_dof;
             e(vR) = [];
             vL = transpose(e);
 
         end
     end
 end
-
-% function [vL,vR,uR] = applyCond(n_dof,n_i,fixNod)
-% 
-% vL = zeros(n_dof-size(fixNod,1), 1);
-% vR = zeros(size(fixNod,1),1);
-% uR = zeros(size(fixNod,1),1);
-% 
-% for i=1:size(fixNod,1)
-%     if fixNod(i,2)==1
-%         vR(i)=fixNod(i,1)*n_i-2;
-%     elseif fixNod(i,2)==2
-%         vR(i)=fixNod(i,1)*n_i-1;
-%     else
-%         vR(i)=fixNod(i,1)*n_i;
-%     end
-% end
-% 
-% for i=1:size(fixNod,1)
-% 
-%     uR(i,1)=fixNod(i,3);
-% end
-% 
-% e=1:n_dof;
-% e(vR)=[];
-% vL=transpose(e);
