@@ -2,7 +2,7 @@ classdef IterativeSolver < Solver
 
     methods (Access = public)
 
-        function uL = iterativesolve(obj,LHS,RHS)
+        function uL = iterativeSolve(obj,LHS,RHS)
 
             obj.LHS = LHS;
             obj.RHS = RHS;

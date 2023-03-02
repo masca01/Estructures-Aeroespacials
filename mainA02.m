@@ -1,4 +1,4 @@
-classdef mainA02 < handle
+classdef MainA02 < handle
 
     properties (Access = public)
         %% INPUT DATA
@@ -32,13 +32,13 @@ classdef mainA02 < handle
         Tmat
 
         % Dimensions
-        n_d             % Number of dimensions
-        n_i                 % Number of DOFs for each node
+        nD             % Number of dimensions
+        nI                 % Number of DOFs for each node
         n               % Total number of nodes
-        n_dof               % Total number of degrees of freedom
-        n_el          % Total number of elements
-        n_nod          % Number of nodes for each element
-        n_el_dof       % Number of DOFs for each element
+        nDof               % Total number of degrees of freedom
+        nEl          % Total number of elements
+        nNod          % Number of nodes for each element
+        nElDof       % Number of DOFs for each element
 
         method = 'Direct'; %'Direct' or 'Iterative' for uL calculation.
 
@@ -59,7 +59,7 @@ classdef mainA02 < handle
 
     methods (Access = public)
 
-        function obj = mainA02()
+        function obj = MainA02()
 
             obj.WM = obj.M * obj.g;
 
@@ -128,13 +128,13 @@ classdef mainA02 < handle
                 ];
 
             % Dimensions
-            obj.n_d = size(obj.x,2);              % Number of dimensions
-            obj.n_i = obj.n_d;                    % Number of DOFs for each node
+            obj.nD = size(obj.x,2);              % Number of dimensions
+            obj.nI = obj.nD;                    % Number of DOFs for each node
             obj.n = size(obj.x,1);                % Total number of nodes
-            obj.n_dof = obj.n_i*obj.n;                % Total number of degrees of freedom
-            obj.n_el = size(obj.Tn,1);            % Total number of elements
-            obj.n_nod = size(obj.Tn,2);           % Number of nodes for each element
-            obj.n_el_dof = obj.n_i*obj.n_nod;         % Number of DOFs for each element
+            obj.nDof = obj.nI*obj.n;                % Total number of degrees of freedom
+            obj.nEl = size(obj.Tn,1);            % Total number of elements
+            obj.nNod = size(obj.Tn,2);           % Number of nodes for each element
+            obj.nElDof = obj.nI*obj.nNod;         % Number of DOFs for each element
 
         end
 
@@ -144,33 +144,33 @@ classdef mainA02 < handle
             %% SOLVER
 
             % Computation of the DOFs connectivities
-            class_connectDOFs = connectDOFs();
-            obj.Td = class_connectDOFs.connect();
+            classDOFsConnector = DOFsConnector();
+            obj.Td = classDOFsConnector.connectDOFs();
 
             % Computation of element stiffness matrices
-            class_computeKelBar = computeKelBar();
-            obj.Kel = class_computeKelBar.compute();
+            classKelBarComputer = KelBarComputer();
+            obj.Kel = classKelBarComputer.computeKelBar();
 
             % Global matrix assembly
-            class_assemblyKG = assemblyKG();
-            obj.KG = class_assemblyKG.assembly(obj.Td,obj.Kel);
+            classAssemblyKG = AssemblyKG();
+            obj.KG = classAssemblyKG.assembleKG(obj.Td,obj.Kel);
 
             % Global force vector assembly
-            class_computeF = computeF();
-            obj.Fext = class_computeF.compute();
+            classFComputer = FComputer();
+            obj.Fext = classFComputer.computeF();
 
             % Apply conditions
-            class_applyCond = applyCond();
-            [obj.vL,obj.vR,obj.uR] = class_applyCond.apply();
+            classCondApplication = CondApplication();
+            [obj.vL,obj.vR,obj.uR] = classCondApplication.applyCond();
 
 
             % System resolution
-            class_solveSys = solveSys();
-            [obj.u,obj.R] = class_solveSys.calc(obj.vL,obj.vR,obj.uR,obj.KG,obj.Fext);
+            classSysSolver = SysSolver();
+            [obj.u,obj.R] = classSysSolver.solveSys(obj.vL,obj.vR,obj.uR,obj.KG,obj.Fext);
 
             % Compute strain and stresses
-            class_computeStrainStressBar = computeStrainStressBar();
-            [obj.sig,obj.eps] = class_computeStrainStressBar.compute(obj.u,obj.Td);
+            classStrainStressBarComputer = StrainStressBarComputer();
+            [obj.sig,obj.eps] = classStrainStressBarComputer.computeStrainStressBar(obj.u,obj.Td);
 
 
             %% POSTPROCESS
@@ -178,11 +178,9 @@ classdef mainA02 < handle
             % Plot deformed structure with stress of each bar
             scale = 20; % Adjust this parameter for properly visualizing the deformation
 
-            class_plotBarStress3D = plotBarStress3D();
-            class_plotBarStress3D.plot(obj.u,obj.sig,scale);
-
+            classBarStress3DPlotter = BarStress3DPlotter();
+            classBarStress3DPlotter.plotBarStress3D(obj.u,obj.sig,scale);
 
         end
-
     end
 end

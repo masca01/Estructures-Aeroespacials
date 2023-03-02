@@ -1,4 +1,4 @@
-classdef Solver < solveSys
+classdef Solver < SysSolver
 
     methods (Access = public)
 
@@ -12,12 +12,12 @@ classdef Solver < solveSys
                 case {'Direct'}
 
                     class1 = DirectSolver();
-                    uL = class1.directsolve(obj.LHS,obj.RHS);
+                    uL = class1.directSolve(obj.LHS,obj.RHS);
 
                 case {'Iterative'}
 
                     class2 = IterativeSolver();
-                    uL = class2.iterativesolve(obj.LHS,obj.RHS);
+                    uL = class2.iterativeSolve(obj.LHS,obj.RHS);
 
                 otherwise
 

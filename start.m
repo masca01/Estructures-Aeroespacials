@@ -4,6 +4,7 @@
 % Date: Winter 2023
 % Author/s: VALERI
 %--------------------------------------------------------------------------
+clear;
 
-superclass_mainA02 = mainA02();
-superclass_mainA02.main();
+superClassMainA02 = MainA02();
+superClassMainA02.main();

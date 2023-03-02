@@ -1,21 +1,21 @@
-classdef assemblyKG < mainA02
+classdef AssemblyKG < MainA02
 
     methods (Access = public)
 
-        function KG = assembly(obj,Td,Kel)
+        function KG = assembleKG(obj,Td,Kel)
 
             obj.Td = Td;
             obj.Kel = Kel;
 
-            KG=zeros(obj.n_dof,obj.n_dof);
+            KG=zeros(obj.nDof,obj.nDof);
 
-            for e=1:obj.n_el
+            for e=1:obj.nEl
 
-                for i=1:obj.n_el_dof
+                for i=1:obj.nElDof
 
                     I=Td(e,i);
 
-                    for j=1:obj.n_el_dof
+                    for j=1:obj.nElDof
 
                         J=Td(e,j);
                         KG(I,J)=KG(I,J)+Kel(i,j,e);
@@ -24,7 +24,7 @@ classdef assemblyKG < mainA02
                 end
             end
 
-            unit_testing_KG(KG)
+            unitTestingKG(KG)
 
         end
     end
