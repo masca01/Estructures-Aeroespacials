@@ -19,7 +19,7 @@ classdef FComputer < MainA02
 
     methods (Access = public)
 
-        function Fext = computeF(obj)
+        function [Fext,FandM] = computeF(obj)
 
 
             Fext = zeros(obj.nDof,1);
@@ -68,53 +68,9 @@ classdef FComputer < MainA02
 
             end
 
-            Fx = 0;
-            Fy = 0;
-            Fz = 0;
+            [Fx,Fy,Fz,Mx,My,Mz] = findFandM(Fext,obj.nDof,obj.WM,obj.x);
 
-            % SUMATORIO DE FUERZAS EN X
-
-            for xm = 1 : 3 : obj.nDof
-                Fx = Fx+Fext(xm,1);
-            end
-
-            ax = Fx/(obj.WM/9.81);
-
-            Fx = Fx - ax*(obj.WM/9.81);
-
-            % SUMATORIO DE FUERZAS EN Y
-
-            for y = 2 : 3 : obj.nDof
-                Fy = Fy+Fext(y,1);
-            end
-
-            % SUMATORIO DE FUERZAS EN Z
-
-            for z = 3 : 3 : obj.nDof
-                Fz = Fz + Fext(z,1);
-            end
-
-            Mx = 0;
-            My = 0;
-            Mz = 0;
-
-            % SUMATORIO DE MOMENTOS EN X
-
-            for xm = 1 : 3 : obj.nDof
-                Mx = Mx + Fext(xm+2,1)*(obj.x((xm+2)/3,2)-obj.x(3,2));
-            end
-
-            % SUMATORIO DE MOMENTOS EN Y
-
-            for y = 2 : 3 : obj.nDof
-                My = My + Fext(y-1,1)*(obj.x((y+1)/3,3)-obj.x(3,3))-Fext(y+1,1)*(obj.x((y+1)/3,1)-obj.x(3,1));
-            end      %    Fx            Dz                 Fz               Dx
-
-            % SUMATORIO DE MOMENTOS EN Z
-
-            for z = 3 : 3 : obj.nDof
-                Mz = Mz + Fext(z-2,1)*(obj.x(z/3,2)-obj.x(3,2));
-            end
+            FandM = [Fx,Fy,Fz,Mx,My,Mz];
 
             unitTestingF(Fext);
 

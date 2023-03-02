@@ -46,6 +46,7 @@ classdef MainA02 < handle
         Kel
         KG
         Fext
+        FandM
         vL
         vR
         uR
@@ -157,7 +158,7 @@ classdef MainA02 < handle
 
             % Global force vector assembly
             classFComputer = FComputer();
-            obj.Fext = classFComputer.computeF();
+            [obj.Fext, obj.FandM] = classFComputer.computeF();
 
             % Apply conditions
             classCondApplication = CondApplication();
